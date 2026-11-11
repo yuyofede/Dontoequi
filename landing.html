@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DontoEqui | Odontología equina en Córdoba</title>
+  <meta name="description" content="Clínica Veterinaria Hippos en Córdoba, Argentina. Atención veterinaria para caballos, perros y gatos: chequeos, vacunaciones, desparasitaciones, tratamientos dentales, urgencias y más." />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#053457',
+            'primary-dark': '#021f33',
+            accent: '#d9a441',
+            muted: '#5b6b63',
+            card: '#ffffff',
+            border: '#e2ebe5',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    html { scroll-behavior: smooth; }
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
+    :root { --spring: cubic-bezier(0.32, 0.72, 0, 1); }
+    .reveal { opacity: 0; transform: translateY(2rem); filter: blur(8px); transition: opacity 800ms var(--spring), transform 800ms var(--spring), filter 800ms var(--spring); }
+    .reveal.is-visible { opacity: 1; transform: translateY(0); filter: blur(0); }
+    @media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; filter: none; transition: none; } }
+    @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+    .animate-float { animation: float 6s ease-in-out infinite; }
+    @keyframes blob { 0%,100%{transform:translate(0,0) scale(1)} 33%{transform:translate(30px,-20px) scale(1.1)} 66%{transform:translate(-20px,20px) scale(.95)} }
+    .animate-blob { animation: blob 14s ease-in-out infinite; }
+    .animation-delay-2000 { animation-delay: 2s; }
+    @keyframes marquee { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+    .animate-marquee { animation: marquee 30s linear infinite; }
+    @keyframes rise { from{opacity:0;transform:translateY(28px)} to{opacity:1;transform:translateY(0)} }
+    .hero-rise { animation: rise 900ms var(--spring) both; }
+    .hero-delay-1 { animation-delay: 120ms; }
+    .hero-delay-2 { animation-delay: 240ms; }
+    .hero-delay-3 { animation-delay: 360ms; }
+    .hero-delay-4 { animation-delay: 480ms; }
+
+    /* --- ThreeUI-inspired effects --- */
+    #hero-canvas {
+      position: absolute;
+      inset: 0;
+      z-index: -10;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 1200ms var(--spring);
+    }
+    #hero-canvas.is-ready { opacity: 1; }
+
+    .hero-tilt {
+      perspective: 1100px;
+      transition: transform 600ms var(--spring);
+      transform-style: preserve-3d;
+      will-change: transform;
+    }
+
+    @property --glow-angle { syntax: "<angle>"; inherits: false; initial-value: 0deg; }
+    .glow-frame { position: relative; isolation: isolate; border-radius: 1.5rem; }
+    .glow-frame::before {
+      content: "";
+      position: absolute;
+      inset: -2px;
+      border-radius: inherit;
+      z-index: -1;
+      background: conic-gradient(from var(--glow-angle), #053457, #B5845, #7fd1c0, #d9a441, #053457);
+      filter: blur(16px);
+      opacity: 0.42;
+      animation: glow-spin 9s linear infinite;
+    }
+    @keyframes glow-spin { to { --glow-angle: 360deg; } }
+
+    .cta-sheen { position: relative; overflow: hidden; }
+    .cta-sheen::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -160%;
+      width: 55%;
+      height: 100%;
+      background: linear-gradient(100deg, transparent, rgba(255,255,255,0.55), transparent);
+      transform: skewX(-20deg);
+      animation: sheen-sweep 5s ease-in-out infinite;
+      pointer-events: none;
+    }
+    @keyframes sheen-sweep {
+      0%, 55% { left: -160%; }
+      100% { left: 160%; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      #hero-canvas { display: none; }
+      .glow-frame::before { animation: none; opacity: 0.3; }
+      .cta-sheen::after { animation: none; display: none; }
+      .hero-tilt { transform: none !important; transition: none; }
+    }
+  </style>
+</head>
+<body class="bg-[#f7faf7] text-[#0f1f17]">
+  <!-- Header -->
+  <header class="sticky top-0 z-40 px-4 pt-4">
+    <div class="mx-auto max-w-7xl">
+      <div class="relative flex items-center justify-between gap-6 rounded-full border border-white/10 bg-white/70 px-4 py-2 shadow-[0_8px_30px_rgba(5,52,87,0.08)] backdrop-blur-xl">
+        <!-- Hamburger (mobile) -->
+        <button type="button" id="menu-btn" aria-label="Abrir menú" aria-expanded="false" class="relative z-50 flex h-10 w-10 flex-col items-center justify-center gap-1.5 md:hidden">
+          <span class="line block h-0.5 w-6 bg-[#0f1f17] transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)]"></span>
+          <span class="line block h-0.5 w-6 bg-[#0f1f17] transition-opacity duration-300"></span>
+          <span class="line block h-0.5 w-6 bg-[#0f1f17] transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)]"></span>
+        </button>
+
+        <!-- Logo: centered on mobile, left on desktop -->
+        <a href="#inicio" class="group absolute left-1/2 -translate-x-1/2 flex items-center gap-3 md:static md:left-auto md:translate-x-0">
+          <img src="public/logo-nuevo.png" alt="Logo DontoEqui" class="h-11 w-auto rounded-xl object-contain transition-transform duration-700 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:scale-105" />
+          <span class="hidden sm:block text-sm font-semibold tracking-tight text-[#0f1f17]">DontoEqui</span>
+        </a>
+
+        <!-- Desktop nav -->
+        <nav class="hidden md:flex items-center gap-1">
+          <a href="#inicio" class="rounded-full px-4 py-2 text-sm font-medium text-muted hover:text-primary transition-colors">Inicio</a>
+          <a href="#servicios" class="rounded-full px-4 py-2 text-sm font-medium text-muted hover:text-primary transition-colors">Servicios</a>
+          <a href="#nosotros" class="rounded-full px-4 py-2 text-sm font-medium text-muted hover:text-primary transition-colors">Nosotros</a>
+          <a href="#contacto" class="rounded-full px-4 py-2 text-sm font-medium text-muted hover:text-primary transition-colors">Contacto</a>
+        </nav>
+
+        <!-- CTA desktop -->
+        <a href="#contacto" class="cta-sheen group hidden md:inline-flex items-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] hover:scale-[0.98]">
+          Pedir turno
+          <span class="flex h-7 w-7 items-center justify-center rounded-full bg-white/15 transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:translate-x-1 group-hover:-translate-y-[1px] group-hover:scale-105">↗</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Mobile menu overlay -->
+    <div id="mobile-menu" class="fixed inset-0 z-30 pointer-events-none md:hidden">
+      <div id="menu-backdrop" class="absolute inset-0 bg-black/40 backdrop-blur-sm opacity-0 transition-opacity duration-500"></div>
+      <nav id="menu-panel" class="absolute left-4 right-4 top-24 rounded-3xl bg-white p-6 shadow-xl ring-1 ring-primary/10 transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] pointer-events-none -translate-y-6 opacity-0">
+        <div class="flex flex-col gap-2">
+          <a href="#inicio" class="menu-link rounded-2xl px-4 py-3 text-base font-medium text-[#0f1f17] transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] hover:bg-primary/5 hover:text-primary translate-y-4 opacity-0">Inicio</a>
+          <a href="#servicios" class="menu-link rounded-2xl px-4 py-3 text-base font-medium text-[#0f1f17] transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] hover:bg-primary/5 hover:text-primary translate-y-4 opacity-0">Servicios</a>
+          <a href="#nosotros" class="menu-link rounded-2xl px-4 py-3 text-base font-medium text-[#0f1f17] transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] hover:bg-primary/5 hover:text-primary translate-y-4 opacity-0">Nosotros</a>
+          <a href="#contacto" class="menu-link rounded-2xl px-4 py-3 text-base font-medium text-[#0f1f17] transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] hover:bg-primary/5 hover:text-primary translate-y-4 opacity-0">Contacto</a>
+          <a href="#contacto" class="menu-link mt-2 inline-flex items-center justify-center gap-2 rounded-full bg-primary px-6 py-3 text-base font-semibold text-white transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] translate-y-4 opacity-0">Pedir turno ↗</a>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <!-- Hero -->
+    <section id="inicio" class="relative overflow-hidden reveal">
+      <div class="absolute inset-0 -z-10 bg-gradient-to-br from-primary/10 via-[#f7faf7] to-accent/10"></div>
+      <canvas id="hero-canvas" aria-hidden="true"></canvas>
+      <div class="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+        <div class="animate-blob absolute -left-24 -top-24 h-72 w-72 rounded-full bg-primary/20 blur-3xl"></div>
+        <div class="animate-blob animation-delay-2000 absolute -right-24 top-1/3 h-80 w-80 rounded-full bg-accent/20 blur-3xl"></div>
+      </div>
+      <div aria-hidden="true" class="pointer-events-none absolute left-1/2 top-1/2 z-[-5] hidden lg:block">
+        <div class="h-80 w-80 rounded-full border-2 border-[#B5845]/40 animate-spin" style="animation-duration: 40s;"></div>
+      </div>
+      <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-20 lg:py-28 grid lg:grid-cols-2 gap-12 items-center">
+        <div class="text-center lg:text-left">
+
+          <h1 class="hero-rise hero-delay-1 mt-6 text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight leading-tight">
+            DontoEqui: Odontología equina de calidad para tus <span class="text-primary">caballos</span>.
+          </h1>
+          <p class="hero-rise hero-delay-2 mt-6 text-lg text-muted max-w-xl">
+            En DontoEqui nos especializamos en odontología equina: diagnóstico, tratamiento y prevención para el bienestar de tu caballo.
+          </p>
+          <div class="hero-rise hero-delay-3 mt-8 flex flex-col sm:flex-row gap-4">
+            <a href="#contacto" class="cta-sheen group inline-flex items-center justify-center gap-2 rounded-full bg-primary px-7 py-3.5 text-base font-semibold text-white shadow-lg transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] hover:scale-[0.98]">Solicitar turno <span class="flex h-7 w-7 items-center justify-center rounded-full bg-white/15 transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:translate-x-1 group-hover:-translate-y-[1px]">↗</span></a>
+            <a href="#servicios" class="inline-flex items-center justify-center rounded-full border border-border bg-card px-7 py-3.5 text-base font-semibold text-[#0f1f17] hover:border-primary hover:text-primary transition-colors">Ver servicios</a>
+          </div>
+          <dl class="hero-rise hero-delay-4 mt-10 grid grid-cols-3 gap-6 max-w-md">
+            <div><dt class="text-2xl font-bold text-primary">+10</dt><dd class="text-sm text-muted">Años de experiencia</dd></div>
+            <div><dt class="text-2xl font-bold text-primary">100%</dt><dd class="text-sm text-muted">Odontología equina</dd></div>
+            <div><dt class="text-2xl font-bold text-primary">Córdoba</dt><dd class="text-sm text-muted">Argentina</dd></div>
+          </dl>
+        </div>
+        <div class="relative hero-tilt" data-tilt>
+          <div class="glow-frame">
+            <div class="aspect-[4/3] rounded-3xl overflow-hidden border border-border shadow-lg animate-float">
+              <img src="public/hero-odontologia.webp" alt="Atención odontológica equina en DontoEqui" class="h-full w-full object-cover" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Marquee -->
+    <div class="relative overflow-hidden border-y border-border bg-primary py-4 text-white">
+      <div class="flex w-max animate-marquee gap-10 pr-10">
+        <span class="flex items-center gap-10 text-sm font-medium uppercase tracking-[0.2em]"><span>Odontología equina</span><span class="text-accent">✦</span></span>
+        <span class="flex items-center gap-10 text-sm font-medium uppercase tracking-[0.2em]"><span>Diagnóstico preciso</span><span class="text-accent">✦</span></span>
+        <span class="flex items-center gap-10 text-sm font-medium uppercase tracking-[0.2em]"><span>Flotado de dientes</span><span class="text-accent">✦</span></span>
+        <span class="flex items-center gap-10 text-sm font-medium uppercase tracking-[0.2em]"><span>Extracciones</span><span class="text-accent">✦</span></span>
+        <span class="flex items-center gap-10 text-sm font-medium uppercase tracking-[0.2em]"><span>Maloclusiones</span><span class="text-accent">✦</span></span>
+        <span class="flex items-center gap-10 text-sm font-medium uppercase tracking-[0.2em]"><span>Control preventivo</span><span class="text-accent">✦</span></span>
+        <span class="flex items-center gap-10 text-sm font-medium uppercase tracking-[0.2em]"><span>Córdoba, Argentina</span><span class="text-accent">✦</span></span>
+        <span class="flex items-center gap-10 text-sm font-medium uppercase tracking-[0.2em]"><span>Odontología equina</span><span class="text-accent">✦</span></span>
+        <span class="flex items-center gap-10 text-sm font-medium uppercase tracking-[0.2em]"><span>Diagnóstico preciso</span><span class="text-accent">✦</span></span>
+        <span class="flex items-center gap-10 text-sm font-medium uppercase tracking-[0.2em]"><span>Flotado de dientes</span><span class="text-accent">✦</span></span>
+        <span class="flex items-center gap-10 text-sm font-medium uppercase tracking-[0.2em]"><span>Extracciones</span><span class="text-accent">✦</span></span>
+        <span class="flex items-center gap-10 text-sm font-medium uppercase tracking-[0.2em]"><span>Maloclusiones</span><span class="text-accent">✦</span></span>
+        <span class="flex items-center gap-10 text-sm font-medium uppercase tracking-[0.2em]"><span>Control preventivo</span><span class="text-accent">✦</span></span>
+        <span class="flex items-center gap-10 text-sm font-medium uppercase tracking-[0.2em]"><span>Córdoba, Argentina</span><span class="text-accent">✦</span></span>
+      </div>
+    </div>
+
+    <!-- Servicios -->
+    <section id="servicios" class="py-24 lg:py-32 bg-card/40 reveal">
+      <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div class="max-w-2xl">
+          <span class="text-sm font-semibold text-primary uppercase tracking-wider">Servicios</span>
+          <h2 class="mt-3 text-3xl sm:text-4xl font-bold tracking-tight">Odontología equina especializada</h2>
+          <p class="mt-4 text-muted">Atención odontológica integral para caballos: diagnóstico, tratamiento y prevención para una correcta masticación y bienestar.</p>
+        </div>
+
+        <div class="mt-12">
+          <h3 class="text-xl font-semibold flex items-center gap-2"><svg class="h-6 w-6 text-primary" viewBox="0 0 640 512" fill="currentColor" aria-hidden="true" focusable="false"><path d="M64 464V316.9c0-108.4 68.3-205.1 170.5-241.3L404.2 15.5C425.6 7.9 448 23.8 448 46.4c0 11-5.5 21.2-14.6 27.3L400 96c48.1 0 91.2 29.8 108.1 74.9l48.6 129.5c11.8 31.4 4.1 66.8-19.6 90.5c-16 16-37.8 25.1-60.5 25.1h-3.4c-26.1 0-50.9-11.6-67.6-31.7l-32.3-38.7c-11.7 4.1-24.2 6.4-37.3 6.4l-.1 0 0 0c-6.3 0-12.5-.5-18.6-1.5c-3.6-.6-7.2-1.4-10.7-2.3l0 0c-28.9-7.8-53.1-26.8-67.8-52.2c-4.4-7.6-14.2-10.3-21.9-5.8s-10.3 14.2-5.8 21.9c24 41.5 68.3 70 119.3 71.9l47.2 70.8c4 6.1 6.2 13.2 6.2 20.4c0 20.3-16.5 36.8-36.8 36.8H112c-26.5 0-48-21.5-48-48zM392 224a24 24 0 1 0 0-48 24 24 0 1 0 0 48z"/></svg> Odontología equina</h3>
+          <div class="mt-6 grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div class="group rounded-[2rem] bg-primary/5 p-2 ring-1 ring-primary/10 transition-transform duration-700 ease-[cubic-bezier(0.32,0.72,0,1)] hover:-translate-y-1">
+              <div class="overflow-hidden rounded-[calc(2rem-0.5rem)] bg-card shadow-[inset_0_1px_1px_rgba(255,255,255,0.15)]">
+                <div class="aspect-[4/3] overflow-hidden"><img src="public/evaluacion-odontologica.webp?v=2" alt="Evaluación odontológica" class="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500" /></div>
+                <div class="p-6">
+                  <div class="mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-primary-dark text-white shadow-sm transition-all duration-500 group-hover:scale-105 group-hover:from-accent group-hover:to-[#b8862f]"><svg class="h-6 w-6" viewBox="0 0 448 512" fill="currentColor" aria-hidden="true" focusable="false"><path d="M186.1 52.1C169.3 39.1 148.7 32 127.5 32C74.7 32 32 74.7 32 127.5v6.2c0 15.8 3.7 31.3 10.7 45.5l23.5 47.1c4.5 8.9 7.6 18.4 9.4 28.2l36.7 205.8c2 11.2 11.6 19.4 22.9 19.8s21.4-7.4 24-18.4l28.9-121.3C192.2 323.7 207 312 224 312s31.8 11.7 35.8 28.3l28.9 121.3c2.6 11.1 12.7 18.8 24 18.4s20.9-8.6 22.9-19.8l36.7-205.8c1.8-9.8 4.9-19.3 9.4-28.2l23.5-47.1c7.1-14.1 10.7-29.7 10.7-45.5v-2.1c0-55-44.6-99.6-99.6-99.6c-24.1 0-47.4 8.8-65.6 24.6l-3.2 2.8 19.5 15.2c7 5.4 8.2 15.5 2.8 22.5s-15.5 8.2-22.5 2.8l-24.4-19-37-28.8z"/></svg></div>
+                  <h3 class="text-lg font-semibold tracking-tight">Evaluación odontológica</h3>
+                  <p class="mt-2 text-sm text-muted">Examen completo de la cavidad oral y diagnóstico preciso.</p>
+                </div>
+              </div>
+            </div>
+            <div class="group rounded-[2rem] bg-primary/5 p-2 ring-1 ring-primary/10 transition-transform duration-700 ease-[cubic-bezier(0.32,0.72,0,1)] hover:-translate-y-1">
+              <div class="overflow-hidden rounded-[calc(2rem-0.5rem)] bg-card shadow-[inset_0_1px_1px_rgba(255,255,255,0.15)]">
+                <div class="aspect-[4/3] overflow-hidden"><img src="public/foto2.jpg" alt="Flotado de dientes" class="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500" /></div>
+                <div class="p-6">
+                  <div class="mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-primary-dark text-white shadow-sm transition-all duration-500 group-hover:scale-105 group-hover:from-accent group-hover:to-[#b8862f]"><svg class="h-6 w-6" viewBox="0 0 576 512" fill="currentColor" aria-hidden="true" focusable="false"><path d="M234.7 42.7L197 56.8c-3 1.1-5 4-5 7.2s2 6.1 5 7.2l37.7 14.1L248.8 123c1.1 3 4 5 7.2 5s6.1-2 7.2-5l14.1-37.7L315 71.2c3-1.1 5-4 5-7.2s-2-6.1-5-7.2L277.3 42.7 263.2 5c-1.1-3-4-5-7.2-5s-6.1 2-7.2 5L234.7 42.7zM46.1 395.4c-18.7 18.7-18.7 49.1 0 67.9l34.6 34.6c18.7 18.7 49.1 18.7 67.9 0L529.9 116.5c18.7-18.7 18.7-49.1 0-67.9L495.3 14.1c-18.7-18.7-49.1-18.7-67.9 0L46.1 395.4zM484.6 82.6l-105 105-23.3-23.3 105-105 23.3 23.3zM7.5 117.2C3 118.9 0 123.2 0 128s3 9.1 7.5 10.8L64 160l21.2 56.5c1.7 4.5 6 7.5 10.8 7.5s9.1-3 10.8-7.5L128 160l56.5-21.2c4.5-1.7 7.5-6 7.5-10.8s-3-9.1-7.5-10.8L128 96 106.8 39.5C105.1 35 100.8 32 96 32s-9.1 3-10.8 7.5L64 96 7.5 117.2zm352 256c-4.5 1.7-7.5 6-7.5 10.8s3 9.1 7.5 10.8L416 416l21.2 56.5c1.7 4.5 6 7.5 10.8 7.5s9.1-3 10.8-7.5L480 416l56.5-21.2c4.5-1.7 7.5-6 7.5-10.8s-3-9.1-7.5-10.8L480 352l-21.2-56.5c-1.7-4.5-6-7.5-10.8-7.5s-9.1 3-10.8 7.5L416 352l-56.5 21.2z"/></svg></div>
+                  <h3 class="text-lg font-semibold tracking-tight">Flotado de dientes</h3>
+                  <p class="mt-2 text-sm text-muted">Corrección de puntas y superficies para una masticación correcta.</p>
+                </div>
+              </div>
+            </div>
+            <div class="group rounded-[2rem] bg-primary/5 p-2 ring-1 ring-primary/10 transition-transform duration-700 ease-[cubic-bezier(0.32,0.72,0,1)] hover:-translate-y-1">
+              <div class="overflow-hidden rounded-[calc(2rem-0.5rem)] bg-card shadow-[inset_0_1px_1px_rgba(255,255,255,0.15)]">
+                <div class="aspect-[4/3] overflow-hidden"><img src="public/foto3.jpg" alt="Extracciones" class="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500" /></div>
+                <div class="p-6">
+                  <div class="mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-primary-dark text-white shadow-sm transition-all duration-500 group-hover:scale-105 group-hover:from-accent group-hover:to-[#b8862f]"><svg class="h-6 w-6" viewBox="0 0 512 512" fill="currentColor" aria-hidden="true" focusable="false"><path d="M256 192l-39.5-39.5c4.9-12.6 7.5-26.2 7.5-40.5C224 50.1 173.9 0 112 0S0 50.1 0 112s50.1 112 112 112c14.3 0 27.9-2.7 40.5-7.5L192 256l-39.5 39.5c-12.6-4.9-26.2-7.5-40.5-7.5C50.1 288 0 338.1 0 400s50.1 112 112 112s112-50.1 112-112c0-14.3-2.7-27.9-7.5-40.5L499.2 76.8c7.1-7.1 7.1-18.5 0-25.6c-28.3-28.3-74.1-28.3-102.4 0L256 192zm22.6 150.6L396.8 460.8c28.3 28.3 74.1 28.3 102.4 0c7.1-7.1 7.1-18.5 0-25.6L342.6 278.6l-64 64zM64 112a48 48 0 1 1 96 0 48 48 0 1 1 -96 0zm48 240a48 48 0 1 1 0 96 48 48 0 1 1 0-96z"/></svg></div>
+                  <h3 class="text-lg font-semibold tracking-tight">Extracciones</h3>
+                  <p class="mt-2 text-sm text-muted">Extracción segura de dientes comprometidos.</p>
+                </div>
+              </div>
+            </div>
+            <div class="group rounded-[2rem] bg-primary/5 p-2 ring-1 ring-primary/10 transition-transform duration-700 ease-[cubic-bezier(0.32,0.72,0,1)] hover:-translate-y-1">
+              <div class="overflow-hidden rounded-[calc(2rem-0.5rem)] bg-card shadow-[inset_0_1px_1px_rgba(255,255,255,0.15)]">
+                <div class="aspect-[4/3] overflow-hidden"><img src="public/foto4.jpg" alt="Maloclusiones" class="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500" /></div>
+                <div class="p-6">
+                  <div class="mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-primary-dark text-white shadow-sm transition-all duration-500 group-hover:scale-105 group-hover:from-accent group-hover:to-[#b8862f]"><svg class="h-6 w-6" viewBox="0 0 512 512" fill="currentColor" aria-hidden="true" focusable="false"><path d="M406.6 374.6l96-96c12.5-12.5 12.5-32.8 0-45.3l-96-96c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L402.7 224l-293.5 0 41.4-41.4c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-96 96c-12.5 12.5-12.5 32.8 0 45.3l96 96c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 288l293.5 0-41.4 41.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0z"/></svg></div>
+                  <h3 class="text-lg font-semibold tracking-tight">Maloclusiones</h3>
+                  <p class="mt-2 text-sm text-muted">Tratamiento de desalineaciones y problemas de mordida.</p>
+                </div>
+              </div>
+            </div>
+            <div class="group overflow-hidden rounded-[2rem] bg-primary/5 p-2 ring-1 ring-primary/10 transition-transform duration-700 ease-[cubic-bezier(0.32,0.72,0,1)] hover:-translate-y-1">
+              <div class="overflow-hidden rounded-[calc(2rem-0.5rem)] bg-card shadow-[inset_0_1px_1px_rgba(255,255,255,0.15)]">
+                <div class="aspect-[4/3] overflow-hidden"><img src="public/foto7.jpg" alt="Control preventivo" class="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500" /></div>
+                <div class="p-6">
+                  <div class="mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-primary-dark text-white shadow-sm transition-all duration-500 group-hover:scale-105 group-hover:from-accent group-hover:to-[#b8862f]"><svg class="h-6 w-6" viewBox="0 0 512 512" fill="currentColor" aria-hidden="true" focusable="false"><path d="M269.4 2.9C265.2 1 260.7 0 256 0s-9.2 1-13.4 2.9L54.3 82.8c-22 9.3-38.4 31-38.3 57.2c.5 99.2 41.3 280.7 213.6 363.2c16.7 8 36.1 8 52.8 0C454.7 420.7 495.5 239.2 496 140c.1-26.2-16.3-47.9-38.3-57.2L269.4 2.9zM144 221.3c0-33.8 27.4-61.3 61.3-61.3c16.2 0 31.8 6.5 43.3 17.9l7.4 7.4 7.4-7.4c11.5-11.5 27.1-17.9 43.3-17.9c33.8 0 61.3 27.4 61.3 61.3c0 16.2-6.5 31.8-17.9 43.3l-82.7 82.7c-6.2 6.2-16.4 6.2-22.6 0l-82.7-82.7c-11.5-11.5-17.9-27.1-17.9-43.3z"/></svg></div>
+                  <h3 class="text-lg font-semibold tracking-tight">Control preventivo</h3>
+                  <p class="mt-2 text-sm text-muted">Chequeos periódicos para evitar complicaciones futuras.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Nosotros -->
+    <section id="nosotros" class="py-24 lg:py-32 reveal">
+      <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 grid lg:grid-cols-2 gap-12 items-center">
+        <div>
+          <span class="text-sm font-semibold text-primary uppercase tracking-wider">Nosotros</span>
+          <h2 class="mt-3 text-3xl sm:text-4xl font-bold tracking-tight">Especialistas en odontología equina</h2>
+          <p class="mt-4 text-muted">En DontoEqui nos dedicamos exclusivamente a la salud dental de los caballos. Creemos en el diagnóstico temprano y el tratamiento preventivo para evitar complicaciones.</p>
+          <p class="mt-4 text-muted">Nuestro compromiso es brindar una atención cercana, transparente y profesional, acompañándote en el cuidado de tu caballo.</p>
+        </div>
+        <div class="grid sm:grid-cols-2 gap-6">
+          <div class="rounded-[2rem] bg-primary/5 p-2 ring-1 ring-primary/10 transition-transform duration-700 ease-[cubic-bezier(0.32,0.72,0,1)] hover:-translate-y-1"><div class="rounded-[calc(2rem-0.5rem)] bg-card p-6 shadow-[inset_0_1px_1px_rgba(255,255,255,0.15)]"><h3 class="text-lg font-semibold tracking-tight">Equipo especializado</h3><p class="mt-2 text-sm text-muted">Veterinarios con experiencia en odontología equina.</p></div></div>
+          <div class="rounded-[2rem] bg-primary/5 p-2 ring-1 ring-primary/10 transition-transform duration-700 ease-[cubic-bezier(0.32,0.72,0,1)] hover:-translate-y-1"><div class="rounded-[calc(2rem-0.5rem)] bg-card p-6 shadow-[inset_0_1px_1px_rgba(255,255,255,0.15)]"><h3 class="text-lg font-semibold tracking-tight">Atención personalizada</h3><p class="mt-2 text-sm text-muted">Tratamos a cada caballo como único, con seguimiento continuo.</p></div></div>
+          <div class="rounded-[2rem] bg-primary/5 p-2 ring-1 ring-primary/10 transition-transform duration-700 ease-[cubic-bezier(0.32,0.72,0,1)] hover:-translate-y-1"><div class="rounded-[calc(2rem-0.5rem)] bg-card p-6 shadow-[inset_0_1px_1px_rgba(255,255,255,0.15)]"><h3 class="text-lg font-semibold tracking-tight">Diagnóstico preciso</h3><p class="mt-2 text-sm text-muted">Equipamiento actualizado para evaluaciones detalladas.</p></div></div>
+          <div class="rounded-[2rem] bg-primary/5 p-2 ring-1 ring-primary/10 transition-transform duration-700 ease-[cubic-bezier(0.32,0.72,0,1)] hover:-translate-y-1"><div class="rounded-[calc(2rem-0.5rem)] bg-card p-6 shadow-[inset_0_1px_1px_rgba(255,255,255,0.15)]"><h3 class="text-lg font-semibold tracking-tight">Prevención</h3><p class="mt-2 text-sm text-muted">Controles periódicos para evitar complicaciones futuras.</p></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contacto -->
+    <section id="contacto" class="py-24 lg:py-32 bg-card/40 reveal">
+      <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 grid lg:grid-cols-2 gap-12">
+        <div>
+          <span class="text-sm font-semibold text-primary uppercase tracking-wider">Contacto</span>
+          <h2 class="mt-3 text-3xl sm:text-4xl font-bold tracking-tight">Pedí tu turno o consultá</h2>
+          <p class="mt-4 text-muted">Completá el formulario y nos pondremos en contacto para coordinar la atención de tu animal. También podés llamarnos o visitarnos.</p>
+          <div class="mt-8 space-y-4 text-sm">
+            <div class="flex items-start gap-3"><span class="text-primary text-lg">📍</span><div><p class="font-semibold">Dirección</p><p class="text-muted">Córdoba, Argentina</p></div></div>
+            <div class="flex items-start gap-3"><span class="text-primary text-lg">📞</span><div><p class="font-semibold">Teléfono</p><p class="text-muted">+54 9 351 000 0000</p></div></div>
+            <div class="flex items-start gap-3"><span class="text-primary text-lg">✉️</span><div><p class="font-semibold">Email</p><p class="text-muted">contacto@clinicahippos.com.ar</p></div></div>
+            <div class="flex items-start gap-3"><span class="text-primary text-lg">🕐</span><div><p class="font-semibold">Horarios</p><p class="text-muted">Lun a Sáb 8:00 a 20:00 · Urgencias 24/7</p></div></div>
+          </div>
+        </div>
+        <div class="rounded-[2rem] bg-primary/5 p-2 ring-1 ring-primary/10">
+          <form id="contactform" class="rounded-[calc(2rem-0.5rem)] bg-card p-8 shadow-[inset_0_1px_1px_rgba(255,255,255,0.15)] space-y-5">
+          <div class="grid sm:grid-cols-2 gap-5">
+            <div>
+              <label class="block text-sm font-medium mb-1.5" for="name">Nombre</label>
+              <input id="name" name="name" required class="w-full rounded-xl border border-border bg-[#f7faf7] px-4 py-2.5 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20" />
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-1.5" for="phone">Teléfono</label>
+              <input id="phone" name="phone" type="tel" required class="w-full rounded-xl border border-border bg-[#f7faf7] px-4 py-2.5 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20" />
+            </div>
+          </div>
+          <div>
+            <label class="block text-sm font-medium mb-1.5" for="email">Email</label>
+            <input id="email" name="email" type="email" required class="w-full rounded-xl border border-border bg-[#f7faf7] px-4 py-2.5 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20" />
+          </div>
+          <div class="grid sm:grid-cols-2 gap-5">
+            <div>
+              <label class="block text-sm font-medium mb-1.5" for="animal">Tipo de animal</label>
+              <select id="animal" name="animal" required class="w-full rounded-xl border border-border bg-[#f7faf7] px-4 py-2.5 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20">
+                <option value="">Seleccionar</option>
+                <option>Caballo</option>
+                <option>Perro</option>
+                <option>Gato</option>
+                <option>Otro</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-1.5" for="service">Servicio</label>
+              <select id="service" name="service" class="w-full rounded-xl border border-border bg-[#f7faf7] px-4 py-2.5 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20">
+                <option value="">Seleccionar (opcional)</option>
+                <option>Chequeo general</option>
+                <option>Vacunación</option>
+                <option>Desparasitación</option>
+                <option>Tratamiento dental</option>
+                <option>Urgencia</option>
+                <option>Esterilización</option>
+                <option>Cirugía básica</option>
+                <option>Análisis clínico</option>
+              </select>
+            </div>
+          </div>
+          <div>
+            <label class="block text-sm font-medium mb-1.5" for="message">Mensaje</label>
+            <textarea id="message" name="message" rows="4" class="w-full rounded-xl border border-border bg-[#f7faf7] px-4 py-2.5 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 resize-none"></textarea>
+          </div>
+          <button type="submit" class="cta-sheen w-full rounded-full bg-primary px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-primary-dark transition-colors">Enviar consulta</button>
+          <p id="form-status" class="text-sm hidden"></p>
+        </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="border-t border-border bg-card/60">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <p class="text-sm text-muted">© 2026 DontoEqui. Córdoba, Argentina.</p>
+      <div class="flex gap-6 text-sm text-muted">
+        <a href="#servicios" class="hover:text-primary transition-colors">Servicios</a>
+        <a href="#nosotros" class="hover:text-primary transition-colors">Nosotros</a>
+        <a href="#contacto" class="hover:text-primary transition-colors">Contacto</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- WhatsApp -->
+  <a href="https://wa.me/5493510000000?text=Hola%2C%20quiero%20consultar%20por%20un%20turno" target="_blank" rel="noopener noreferrer" aria-label="Contactar por WhatsApp" class="fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-lg hover:scale-110 transition-transform">
+    <svg viewBox="0 0 24 24" class="h-7 w-7 fill-current" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.52-8.413Z"/></svg>
+  </a>
+
+  <script>
+    (function(){
+      var els = document.querySelectorAll('.reveal');
+      var io = new IntersectionObserver(function(entries){
+        entries.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('is-visible'); io.unobserve(e.target);} });
+      }, {threshold: 0.15});
+      els.forEach(function(el){ io.observe(el); });
+    })();
+  </script>
+  <script>
+    (function(){
+      var btn = document.getElementById('menu-btn');
+      var menu = document.getElementById('mobile-menu');
+      var panel = document.getElementById('menu-panel');
+      var backdrop = document.getElementById('menu-backdrop');
+      var links = document.querySelectorAll('.menu-link');
+      var lines = btn.querySelectorAll('.line');
+      var open = false;
+      function render(){
+        btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+        menu.classList.toggle('pointer-events-none', !open);
+        panel.classList.toggle('pointer-events-none', !open);
+        panel.classList.toggle('-translate-y-6', !open);
+        panel.classList.toggle('opacity-0', !open);
+        backdrop.classList.toggle('opacity-0', !open);
+        lines[0].classList.toggle('translate-y-2', open);
+        lines[0].classList.toggle('rotate-45', open);
+        lines[1].classList.toggle('opacity-0', open);
+        lines[2].classList.toggle('-translate-y-2', open);
+        lines[2].classList.toggle('-rotate-45', open);
+        links.forEach(function(l, i){
+          l.classList.toggle('translate-y-4', !open);
+          l.classList.toggle('opacity-0', !open);
+          l.style.transitionDelay = open ? (i * 60 + 100) + 'ms' : '0ms';
+        });
+      }
+      btn.addEventListener('click', function(){ open = !open; render(); });
+      backdrop.addEventListener('click', function(){ open = false; render(); });
+      links.forEach(function(l){ l.addEventListener('click', function(){ open = false; render(); }); });
+    })();
+  </script>
+  <script>
+    document.getElementById('contactform').addEventListener('submit', function(e){
+      e.preventDefault();
+      const status = document.getElementById('form-status');
+      status.classList.remove('hidden');
+      status.textContent = '¡Gracias! Te contactaremos a la brevedad.';
+      status.classList.add('text-primary');
+      this.reset();
+    });
+  </script>
+
+  <script>
+    (function(){
+      var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var canvas = document.getElementById('hero-canvas');
+      if (!canvas || reduceMotion) return;
+
+      var gl = canvas.getContext('webgl', { alpha: true, antialias: false, premultipliedAlpha: false, powerPreference: 'high-performance' });
+      if (!gl) return;
+
+      var VERT = 'attribute vec2 a_pos; void main(){ gl_Position = vec4(a_pos, 0.0, 1.0); }';
+      var FRAG = [
+        'precision highp float;',
+        'uniform vec2 u_res;',
+        'uniform float u_time;',
+        'uniform vec2 u_mouse;',
+        'float hash(vec2 p){ return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453123); }',
+        'float noise(vec2 p){',
+        '  vec2 i = floor(p); vec2 f = fract(p);',
+        '  vec2 u = f * f * (3.0 - 2.0 * f);',
+        '  return mix(mix(hash(i), hash(i + vec2(1.0, 0.0)), u.x),',
+        '             mix(hash(i + vec2(0.0, 1.0)), hash(i + vec2(1.0, 1.0)), u.x), u.y);',
+        '}',
+        'float fbm(vec2 p){',
+        '  float v = 0.0; float a = 0.5;',
+        '  for (int i = 0; i < 5; i++){ v += a * noise(p); p *= 2.02; a *= 0.5; }',
+        '  return v;',
+        '}',
+        'void main(){',
+        '  vec2 st = gl_FragCoord.xy / u_res.xy;',
+        '  vec2 p = st; p.x *= u_res.x / u_res.y;',
+        '  float t = u_time * 0.12;',
+        '  float n = fbm(p * 1.8 + vec2(t, -t * 0.6));',
+        '  vec2 c1 = vec2(0.30 + 0.10 * sin(t * 1.4), 0.60 + 0.10 * cos(t * 1.1));',
+        '  vec2 c2 = vec2(0.75 + 0.10 * cos(t * 0.9), 0.40 + 0.10 * sin(t * 1.3));',
+        '  c1.x *= u_res.x / u_res.y; c2.x *= u_res.x / u_res.y;',
+        '  float d1 = length(p - c1) + (n - 0.5) * 0.22;',
+        '  float d2 = length(p - c2) + (n - 0.5) * 0.22;',
+        '  float g1 = smoothstep(0.62, 0.0, d1);',
+        '  float g2 = smoothstep(0.55, 0.0, d2);',
+        '  vec3 primary = vec3(0.02, 0.20, 0.34);',
+        '  vec3 accent  = vec3(0.85, 0.64, 0.25);',
+        '  vec3 teal    = vec3(0.35, 0.72, 0.66);',
+        '  vec3 col = mix(primary, accent, clamp(g2 / (g1 + g2 + 0.001), 0.0, 1.0));',
+        '  col = mix(col, teal, g1 * 0.25);',
+        '  float a = g1 * 0.30 + g2 * 0.26;',
+        '  a *= 0.85 + 0.15 * n;',
+        '  vec2 q = st - 0.5;',
+        '  a *= smoothstep(0.75, 0.25, length(q));',
+        '  vec2 m = u_mouse; m.x *= u_res.x / u_res.y;',
+        '  float md = length(p - m);',
+        '  a += smoothstep(0.35, 0.0, md) * 0.06;',
+        '  gl_FragColor = vec4(col, a);',
+        '}'
+      ].join('\n');
+
+      function compile(type, source){
+        var sh = gl.createShader(type);
+        gl.shaderSource(sh, source);
+        gl.compileShader(sh);
+        if (!gl.getShaderParameter(sh, gl.COMPILE_STATUS)) {
+          gl.deleteShader(sh);
+          return null;
+        }
+        return sh;
+      }
+
+      var vs = compile(gl.VERTEX_SHADER, VERT);
+      var fs = compile(gl.FRAGMENT_SHADER, FRAG);
+      if (!vs || !fs) return;
+
+      var program = gl.createProgram();
+      gl.attachShader(program, vs);
+      gl.attachShader(program, fs);
+      gl.linkProgram(program);
+      if (!gl.getProgramParameter(program, gl.LINK_STATUS)) return;
+      gl.useProgram(program);
+
+      var buffer = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
+      var position = gl.getAttribLocation(program, 'a_pos');
+      gl.enableVertexAttribArray(position);
+      gl.vertexAttribPointer(position, 2, gl.FLOAT, false, 0, 0);
+
+      var uRes = gl.getUniformLocation(program, 'u_res');
+      var uTime = gl.getUniformLocation(program, 'u_time');
+      var uMouse = gl.getUniformLocation(program, 'u_mouse');
+
+      gl.enable(gl.BLEND);
+      gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+
+      var mouseX = 0.5, mouseY = 0.5;
+      var frame = 0, start = performance.now(), visible = true;
+
+      function resize(){
+        var rect = canvas.getBoundingClientRect();
+        var dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+        var w = Math.max(1, Math.round(rect.width * dpr));
+        var h = Math.max(1, Math.round(rect.height * dpr));
+        if (canvas.width !== w || canvas.height !== h) {
+          canvas.width = w;
+          canvas.height = h;
+        }
+        gl.viewport(0, 0, canvas.width, canvas.height);
+        if (uRes) gl.uniform2f(uRes, canvas.width, canvas.height);
+      }
+
+      function render(now){
+        var elapsed = (now - start) * 0.001;
+        if (uTime) gl.uniform1f(uTime, elapsed);
+        if (uMouse) gl.uniform2f(uMouse, mouseX, mouseY);
+        gl.clearColor(0, 0, 0, 0);
+        gl.clear(gl.COLOR_BUFFER_BIT);
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+        frame = (visible && !document.hidden) ? requestAnimationFrame(render) : 0;
+      }
+
+      var resizeObserver = new ResizeObserver(resize);
+      resizeObserver.observe(canvas);
+
+      var intersection = new IntersectionObserver(function(entries){
+        visible = entries[0] ? entries[0].isIntersecting : true;
+        if (visible && !frame) frame = requestAnimationFrame(render);
+        if (!visible && frame) { cancelAnimationFrame(frame); frame = 0; }
+      });
+      intersection.observe(canvas);
+
+      document.addEventListener('visibilitychange', function(){
+        if (!document.hidden && visible && !frame) frame = requestAnimationFrame(render);
+      });
+
+      window.addEventListener('pointermove', function(e){
+        var rect = canvas.getBoundingClientRect();
+        if (!rect.width || !rect.height) return;
+        mouseX = (e.clientX - rect.left) / rect.width;
+        mouseY = 1 - (e.clientY - rect.top) / rect.height;
+      }, { passive: true });
+
+      resize();
+      canvas.classList.add('is-ready');
+      frame = requestAnimationFrame(render);
+    })();
+  </script>
+
+  <script>
+    (function(){
+      var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var el = document.querySelector('[data-tilt]');
+      if (!el || reduceMotion) return;
+      var raf = 0, tx = 0, ty = 0;
+      function apply(){
+        raf = 0;
+        el.style.transform = 'rotateX(' + ty.toFixed(2) + 'deg) rotateY(' + tx.toFixed(2) + 'deg)';
+      }
+      el.addEventListener('pointermove', function(e){
+        var rect = el.getBoundingClientRect();
+        if (!rect.width || !rect.height) return;
+        var px = (e.clientX - rect.left) / rect.width - 0.5;
+        var py = (e.clientY - rect.top) / rect.height - 0.5;
+        tx = px * 10;
+        ty = -py * 10;
+        if (!raf) raf = requestAnimationFrame(apply);
+      });
+      el.addEventListener('pointerleave', function(){
+        tx = 0; ty = 0;
+        if (!raf) raf = requestAnimationFrame(apply);
+      });
+    })();
+  </script>
+</body>
+</html>
