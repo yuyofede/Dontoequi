@@ -115,3 +115,67 @@ html {
 .hero-delay-2 { animation-delay: 240ms; }
 .hero-delay-3 { animation-delay: 360ms; }
 .hero-delay-4 { animation-delay: 480ms; }
+
+/* --- ThreeUI-inspired effects --- */
+@property --glow-angle {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
+}
+
+.glow-frame {
+  position: relative;
+  isolation: isolate;
+  border-radius: 1.5rem;
+}
+
+.glow-frame::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  z-index: -1;
+  background: conic-gradient(from var(--glow-angle), #053457, #B5845, #7fd1c0, #d9a441, #053457);
+  filter: blur(16px);
+  opacity: 0.42;
+  animation: glow-spin 9s linear infinite;
+}
+
+@keyframes glow-spin {
+  to { --glow-angle: 360deg; }
+}
+
+.cta-sheen {
+  position: relative;
+  overflow: hidden;
+}
+
+.cta-sheen::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -160%;
+  width: 55%;
+  height: 100%;
+  background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.55), transparent);
+  transform: skewX(-20deg);
+  animation: sheen-sweep 5s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes sheen-sweep {
+  0%, 55% { left: -160%; }
+  100% { left: 160%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .glow-frame::before { animation: none; opacity: 0.3; }
+  .cta-sheen::after { animation: none; display: none; }
+}
+
+.hero-tilt {
+  perspective: 1100px;
+  transition: transform 600ms var(--spring);
+  transform-style: preserve-3d;
+  will-change: transform;
+}
