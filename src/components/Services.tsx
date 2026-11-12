@@ -37,7 +37,7 @@ const HorseIcon = (props: React.SVGProps<SVGSVGElement>) => (
 type Service = { icon: React.ReactElement; image: string; title: string; desc: string; delay?: number };
 
 const services: Service[] = [
-  { icon: <ToothIcon />, image: '/evaluacion_odontologia.webp', title: 'Evaluación odontológica', desc: 'Examen completo de la cavidad oral y diagnóstico preciso.' },
+  { icon: <ToothIcon />, image: '/evaluacion-odontologica.webp', title: 'Evaluación odontológica', desc: 'Examen completo de la cavidad oral y diagnóstico preciso.' },
   { icon: <WandIcon />, image: '/foto2.jpg', title: 'Flotado de dientes', desc: 'Corrección de puntas y superficies para una masticación correcta.' },
   { icon: <ScissorsIcon />, image: '/foto3.jpg', title: 'Extracciones', desc: 'Extracción segura de dientes comprometidos.' },
   { icon: <ArrowsIcon />, image: '/foto4.jpg', title: 'Maloclusiones', desc: 'Tratamiento de desalineaciones y problemas de mordida.' },
